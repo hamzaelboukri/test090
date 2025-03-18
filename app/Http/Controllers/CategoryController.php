@@ -29,7 +29,7 @@ class CategoryController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation error',
+                'message' => 'validation error',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -37,10 +37,46 @@ class CategoryController extends Controller
         $category = Category::create($validator->validated());
         return response()->json([
             'success' => true,
-            'message' => 'Category',
+            'message' => 'category storet',
             'data' => $category
         ], 201);
     }
+
+public function updet(Request $request ,$id){
+
+    $categories= Category::findorfails($id) ;
+
+    if($categories->fails()){
+        return response()->json([
+            'succes'=>false,
+            'message'=>'id not fonds',
+            'errors' => $categories->errors()
+        ], 422);
+    }
+
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255|unique:categories',
+        'des' => 'nullable|string',
+    ]);
+
+    if($validator->fails()){
+        return response()->json([
+            'succes'=>false,
+            'message'=>'validation errors',
+            'errors'=>$validator->errors()
+        ],422);
+    }
+
+    $category = Category::create($validator->validated());
+    return response()->json([
+        'success' => true,
+        'message' => 'category update',
+        'data' => $category
+    ], 201);
+}
+
+
+
 
     
 
@@ -50,14 +86,14 @@ class CategoryController extends Controller
         if (!$category) {
             return response()->json([
                 'success' => false,
-                'message' => 'Category NOT fonds'
+                'message' => 'category NOT fonds'
             ], 404);
         }
 
         $category->delete();
         return response()->json([
             'success' => true,
-            'message' => 'Category DELETE'
+            'message' => 'category DELETE'
         ]);
     }
 
